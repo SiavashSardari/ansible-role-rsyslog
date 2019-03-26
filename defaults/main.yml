@@ -4,7 +4,7 @@
 # Boolean
 # To configure a server to reveice logs, set rsyslog_receiver to true.
 # Setting this value to false will not configure the server tor receive logs.
-rsyslog_receiver: no
+rsyslog_receiver: true
 
 # To forward logs to another server, set rsyslog_remote to the hostname or
 # the ipaddress of the receiving rsyslog server.

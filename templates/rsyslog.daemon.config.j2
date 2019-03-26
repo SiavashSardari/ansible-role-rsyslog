@@ -1,0 +1,6 @@
+# {{ ansible_managed }}
+
+# Options for rsyslogd
+# -x disables DNS lookups for remote messages
+
+{{ rsyslog__daemon_environment_conf_name }}="{{ rsyslog__options | join(' ') }}"

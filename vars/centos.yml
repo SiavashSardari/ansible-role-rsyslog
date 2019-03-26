@@ -1,0 +1,37 @@
+---
+# rsyslog/vars/centos.yml
+
+#? rsyslog__pacakge_name:
+#?   type: string
+#?   description: Install rsyslog software utility.
+#?   required: True
+#?   default: rsyslog
+rsyslog__pacakge_name: rsyslog
+
+#? rsyslog__config_file:
+#?   type: string
+#?   description: Path to the rsyslogd configuration file.
+#?   required: True
+#?   default: /etc/rsyslog.conf
+rsyslog__config_file: '/etc/rsyslog.conf'
+
+#? rsyslog__confd_dir:
+#?   type: string
+#?   description: Path to the directory with all the additional configuration files for rsyslog.
+#?   required: True
+#?   default: /etc/rsyslog.d
+rsyslog__confd_dir: '/etc/rsyslog.d'
+
+#? rsyslog__daemon_environment_file:
+#?   type: string
+#?   description: Path to the file with additional configuration for rsyslog daemon.
+#?   required: True
+#?   default: /etc/default/rsyslog
+rsyslog__daemon_environment_file: '/etc/sysconfig/rsyslog'
+
+#? rsyslog__daemon_environment_conf_name:
+#?   type: string
+#?   description: Adding options to the rsyslog daemon on the start.
+#?   required: True
+#?   default: RSYSLOGD_OPTIONS
+rsyslog__daemon_environment_conf_name: 'SYSLOGD_OPTIONS'

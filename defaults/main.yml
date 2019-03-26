@@ -1,0 +1,63 @@
+---
+# defaults file for rsyslog
+
+# Boolean
+# To configure a server to reveice logs, set rsyslog_receiver to true.
+# Setting this value to false will not configure the server tor receive logs.
+rsyslog_receiver: no
+
+# To forward logs to another server, set rsyslog_remote to the hostname or
+# the ipaddress of the receiving rsyslog server.
+# Not setting this variable will not forward logs.
+# rsyslog_remote: server1.example.com
+
+#? rsyslog__package_state:
+#?   type: string
+#?   description: State of rsyslog package.
+#?   required: True
+#?   default: present
+rsyslog__package_state: 'present'
+
+#? rsyslog__options:
+#?   type: list
+#?   description: Options to add to the initial script for rsyslog daemon.
+#?   required: True
+#?   default: []
+# examples:
+#  - '-4'
+#  - '-r'
+rsyslog__options: []
+
+#? rsyslog__modload:
+#?   type: list
+#?   description: List of rsyslog loaded extra modules.
+#?   required: False
+#?   default: []
+rsyslog__modload: []
+
+#? rsyslog_port:
+#?   type: int
+#?   description: TCP&UDP port to be open for rsyslog log input.
+#?   required: False
+#?   default: 514
+rsyslog_port: 514
+
+#? rsyslog_address:
+#?   type: my_example_type
+#?   description: IP source address for rsyslog log input.
+#?   required: False
+#?   default: 0.0.0.0
+rsyslog_address: 0.0.0.0
+
+#? rsyslog__rules:
+#?   type: list
+#?   description: List of extra rsyslog.d configurations.
+#?   required: True
+#?   default: {}
+# example:
+#  rsyslog__rules:
+#    10-forward: '*.* @192.168.0.10:514'
+#    50-haproxy: |
+#      if $programname startswith 'haproxy' then /var/log/haproxy.log
+#      & stop
+rsyslog__rules: {}

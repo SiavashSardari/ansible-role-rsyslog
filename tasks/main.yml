@@ -1,0 +1,104 @@
+---
+- name: uninstall conflicting systemd-logger
+  package:
+    name: systemd-logger
+    state: absent
+
+- name: "rsyslog | make sure the OS is one of the CentOS/Ubuntu distribution"
+  assert: { that: "ansible_distribution in ['CentOS', 'Ubuntu']" }
+  tags:
+    - assert
+    - rsyslog
+
+- name: "rsyslog | include os specific variables"
+  include_vars: "{{ item }}"
+  with_first_found:
+    - "{{ ansible_distribution | lower }}.yml"
+  tags: always
+
+- name: "rsyslog | install rsyslog"
+  package:
+    name: "{{ rsyslog__pacakge_name }}"
+    state: "{{ rsyslog__package_state }}"
+  register: rsyslog_install_rsyslog
+  until: rsyslog_install_rsyslog
+  retries: 3
+  tags:
+    - rsyslog
+    - rsyslog::install
+
+- name: "rsyslog | confd dir"
+  file:
+    path: "{{ rsyslog__confd_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+    seuser: system_u
+    serole: object_r
+    setype: syslog_conf_t
+  tags:
+    - rsyslog
+    - rsyslog::install
+
+- name: "rsyslog | configure daemon "
+  template:
+    src: templates/rsyslog.daemon.config.j2
+    dest: "{{ rsyslog__daemon_environment_file }}"
+    owner: root
+    group: root
+    mode: 0644
+    seuser: system_u
+    serole: object_r
+    setype: etc_t
+  notify: "Restart rsyslog"
+  tags:
+    - rsyslog
+    - rsyslog::configure
+
+- name: "rsyslog | configure rsyslog"
+  template:
+    src: "templates/{{ ansible_distribution | lower }}/rsyslog.conf.{{ ansible_distribution | lower }}.{{ ansible_distribution_major_version | int }}.j2"
+    dest: "{{ rsyslog__config_file }}"
+    owner: root
+    group: root
+    mode: 0644
+    seuser: system_u
+    serole: object_r
+    setype: syslog_conf_t
+  notify: "Restart rsyslog"
+  tags:
+    - rsyslog
+    - rsyslog::configure
+
+- name: "rsyslog | configure rsyslog.d"
+  template:
+    src: "templates/rules.conf.j2"
+    dest: "{{ rsyslog__confd_dir }}/{{ item }}.conf"
+    mode: 0644
+    seuser: system_u
+    serole: object_r
+    setype: syslog_conf_t
+  with_items: "{{ rsyslog__rules }}"
+  notify: "Restart rsyslog"
+  tags:
+    - rsyslog
+    - rsyslog::configure
+
+
+- name: "rsyslog | ensure that rsyslog is running"
+  service:
+    name: rsyslog
+    state: started
+  tags:
+    - rsyslog
+    - rsyslog::running
+
+
+- name: "rsyslog | ensure that rsyslog is enabled"
+  service:
+    name: rsyslog
+    enabled: true
+  tags:
+    - rsyslog
+    - rsyslog::enabled
